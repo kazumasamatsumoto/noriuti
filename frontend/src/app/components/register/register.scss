@@ -1,0 +1,252 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.register-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 2rem;
+
+  .register-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.register-form {
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+  }
+
+  .form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+
+    &:last-of-type {
+      border-bottom: none;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      margin: 0 0 1.5rem 0;
+      color: #495057;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-left: 3px solid #007bff;
+      padding-left: 0.75rem;
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+      font-size: 0.9rem;
+
+      &::after {
+        content: "*";
+        color: #dc3545;
+        margin-left: 0.25rem;
+      }
+
+      &[for="bio"]::after,
+      &[for="budget"]::after,
+      &[for="frequency"]::after {
+        content: "";
+      }
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+
+      &.error {
+        border-color: #dc3545;
+        
+        &:focus {
+          border-color: #dc3545;
+          box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+        }
+      }
+    }
+
+    .field-error {
+      color: #dc3545;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      min-height: 1rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  .slot-chips,
+  .time-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .chip {
+    padding: 0.5rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+    color: #495057;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    outline: none;
+
+    &:hover {
+      background-color: #e9ecef;
+      transform: translateY(-1px);
+    }
+
+    &.selected {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+    text-align: center;
+
+    .btn {
+      padding: 0.875rem 2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-width: 160px;
+
+      &.btn-primary {
+        background-color: #007bff;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #0056b3;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          background-color: #6c757d;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+    }
+
+    .loading-spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .login-link {
+      margin-top: 1.5rem;
+      color: #666;
+      font-size: 0.9rem;
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ì¹Ýó·ÖþÜ
+@media (max-width: 768px) {
+  .register-container {
+    padding: 1rem;
+  }
+
+  .register-card {
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .slot-chips,
+  .time-chips {
+    .chip {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+}

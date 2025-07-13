@@ -1,0 +1,216 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2 class="register-title">Pachi Friend アカウント作成</h2>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <!-- エラーメッセージ -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- 基本情報 -->
+      <div class="form-section">
+        <h3>基本情報</h3>
+        
+        <div class="form-group">
+          <label for="email">メールアドレス *</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control"
+            [class.error]="getFieldError('email')"
+          >
+          <div class="field-error">{{ getFieldError('email') }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">パスワード *</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control"
+            [class.error]="getFieldError('password')"
+          >
+          <div class="field-error">{{ getFieldError('password') }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">パスワード確認 *</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            class="form-control"
+            [class.error]="getFieldError('confirmPassword')"
+          >
+          <div class="field-error">{{ getFieldError('confirmPassword') }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="name">お名前 *</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            class="form-control"
+            [class.error]="getFieldError('name')"
+          >
+          <div class="field-error">{{ getFieldError('name') }}</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="age">年齢 *</label>
+            <input 
+              type="number" 
+              id="age" 
+              formControlName="age" 
+              class="form-control"
+              min="18" 
+              max="100"
+              [class.error]="getFieldError('age')"
+            >
+            <div class="field-error">{{ getFieldError('age') }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="gender">性別 *</label>
+            <select 
+              id="gender" 
+              formControlName="gender" 
+              class="form-control"
+              [class.error]="getFieldError('gender')"
+            >
+              <option value="">選択してください</option>
+              <option value="男性">男性</option>
+              <option value="女性">女性</option>
+              <option value="その他">その他</option>
+            </select>
+            <div class="field-error">{{ getFieldError('gender') }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 住所情報 -->
+      <div class="form-section">
+        <h3>住所情報</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prefecture">都道府県 *</label>
+            <select 
+              id="prefecture" 
+              formControlName="prefecture" 
+              class="form-control"
+              [class.error]="getFieldError('prefecture')"
+            >
+              <option value="">選択してください</option>
+              <option *ngFor="let pref of prefectures" [value]="pref">{{ pref }}</option>
+            </select>
+            <div class="field-error">{{ getFieldError('prefecture') }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="city">市区町村 *</label>
+            <input 
+              type="text" 
+              id="city" 
+              formControlName="city" 
+              class="form-control"
+              [class.error]="getFieldError('city')"
+            >
+            <div class="field-error">{{ getFieldError('city') }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- プロフィール情報 -->
+      <div class="form-section">
+        <h3>プロフィール</h3>
+        
+        <div class="form-group">
+          <label for="bio">自己紹介</label>
+          <textarea 
+            id="bio" 
+            formControlName="bio" 
+            class="form-control" 
+            rows="3"
+            placeholder="あなたについて教えてください..."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- パチスロ情報 -->
+      <div class="form-section">
+        <h3>パチスロ情報</h3>
+        
+        <div class="form-group">
+          <label>好きな機種（複数選択可）</label>
+          <div class="slot-chips">
+            <button 
+              *ngFor="let slot of popularSlots" 
+              type="button"
+              class="chip"
+              [class.selected]="isSlotSelected(slot)"
+              (click)="onSlotToggle(slot)"
+            >
+              {{ slot }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="budget">予算</label>
+            <select id="budget" formControlName="budget" class="form-control">
+              <option value="">選択してください</option>
+              <option *ngFor="let budget of budgetOptions" [value]="budget">{{ budget }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="frequency">頻度</label>
+            <select id="frequency" formControlName="frequency" class="form-control">
+              <option value="">選択してください</option>
+              <option *ngFor="let freq of frequencyOptions" [value]="freq">{{ freq }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>遊技時間帯（複数選択可）</label>
+          <div class="time-chips">
+            <button 
+              *ngFor="let timeSlot of timeSlotOptions" 
+              type="button"
+              class="chip"
+              [class.selected]="isTimeSlotSelected(timeSlot)"
+              (click)="onTimeSlotToggle(timeSlot)"
+            >
+              {{ timeSlot }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="loading || registerForm.invalid"
+        >
+          <span *ngIf="loading" class="loading-spinner"></span>
+          {{ loading ? '登録中...' : 'アカウント作成' }}
+        </button>
+        
+        <p class="login-link">
+          すでにアカウントをお持ちですか？ 
+          <a routerLink="/login">ログイン</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

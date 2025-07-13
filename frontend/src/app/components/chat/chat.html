@@ -1,0 +1,193 @@
+<div class="chat-container">
+  <!-- エラー表示 -->
+  <div *ngIf="error" class="error-banner">
+    <span>{{ error }}</span>
+    <button class="error-close" (click)="clearError()">×</button>
+  </div>
+
+  <!-- チャット一覧モード -->
+  <div *ngIf="viewMode === 'list'" class="conversations-view">
+    <!-- ヘッダー -->
+    <div class="chat-header">
+      <h1>💬 チャット</h1>
+      <a routerLink="/dashboard" class="back-btn">
+        <span>←</span> ダッシュボード
+      </a>
+    </div>
+
+    <!-- ローディング -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>チャット一覧を読み込み中...</p>
+    </div>
+
+    <!-- チャット一覧 -->
+    <div *ngIf="!loading" class="conversations-list">
+      <div 
+        *ngFor="let conversation of conversations; trackBy: trackByConversationId" 
+        class="conversation-item"
+        (click)="selectConversation(conversation)"
+      >
+        <div class="conversation-avatar">
+          <img 
+            [src]="conversation.otherUser.profileImage || '/assets/images/default-avatar.png'"
+            [alt]="conversation.otherUser.name"
+            onerror="this.src='/assets/images/default-avatar.png'"
+          >
+          <span 
+            *ngIf="conversation.unreadCount > 0" 
+            class="unread-badge"
+          >
+            {{ conversation.unreadCount > 99 ? '99+' : conversation.unreadCount }}
+          </span>
+        </div>
+
+        <div class="conversation-content">
+          <div class="conversation-header">
+            <h3>{{ conversation.otherUser.name }}</h3>
+            <span class="conversation-time">
+              {{ formatConversationTime(conversation.lastMessage.createdAt) }}
+            </span>
+          </div>
+          
+          <div class="conversation-preview">
+            <p 
+              class="last-message"
+              [class.unread]="conversation.unreadCount > 0"
+            >
+              {{ conversation.lastMessage.content }}
+            </p>
+          </div>
+        </div>
+
+        <div class="conversation-actions">
+          <button 
+            class="delete-btn"
+            (click)="deleteConversation(conversation, $event)"
+            title="会話を削除"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+
+      <!-- 会話がない場合 -->
+      <div *ngIf="conversations.length === 0" class="no-conversations">
+        <div class="no-conversations-content">
+          <h2>💬 まだチャットがありません</h2>
+          <p>マッチングして新しい出会いを始めましょう！</p>
+          <a routerLink="/matching" class="btn btn-primary">
+            マッチングを始める
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 個別チャットモード -->
+  <div *ngIf="viewMode === 'conversation'" class="conversation-view">
+    <!-- チャットヘッダー -->
+    <div class="chat-header">
+      <button class="back-btn" (click)="backToList()">
+        <span>←</span> チャット一覧
+      </button>
+      
+      <div *ngIf="currentUser" class="chat-user-info">
+        <img 
+          [src]="currentUser.profileImage || '/assets/images/default-avatar.png'"
+          [alt]="currentUser.name"
+          class="user-avatar"
+          onerror="this.src='/assets/images/default-avatar.png'"
+        >
+        <div class="user-details">
+          <h2>{{ currentUser.name }}</h2>
+          <p>{{ currentUser.prefecture }} {{ currentUser.city }}</p>
+        </div>
+      </div>
+
+      <button 
+        *ngIf="currentUser"
+        class="profile-btn"
+        (click)="viewProfile(currentUser.id)"
+        title="プロフィールを見る"
+      >
+        👤
+      </button>
+    </div>
+
+    <!-- ローディング -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>メッセージを読み込み中...</p>
+    </div>
+
+    <!-- メッセージ一覧 -->
+    <div 
+      *ngIf="!loading" 
+      class="messages-container" 
+      #messagesContainer
+    >
+      <div 
+        *ngFor="let message of messages; trackBy: trackByMessageId" 
+        class="message-wrapper"
+        [class.my-message]="isMyMessage(message)"
+        [class.other-message]="!isMyMessage(message)"
+      >
+        <div class="message-bubble">
+          <div class="message-content">
+            {{ message.content }}
+          </div>
+          <div class="message-meta">
+            <span class="message-time">
+              {{ formatMessageTime(message.createdAt) }}
+            </span>
+            <span 
+              *ngIf="isMyMessage(message)" 
+              class="read-status"
+              [class.read]="message.isRead"
+            >
+              {{ message.isRead ? '既読' : '未読' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- メッセージがない場合 -->
+      <div *ngIf="messages.length === 0" class="no-messages">
+        <div class="no-messages-content">
+          <h3>💬 チャットを始めましょう！</h3>
+          <p>{{ currentUser?.name }}さんとの初めての会話です。<br>挨拶をしてみませんか？</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- メッセージ入力エリア -->
+    <div class="message-input-area">
+      <div class="input-container">
+        <textarea
+          #messageInput
+          [(ngModel)]="newMessage"
+          (keypress)="onKeyPress($event)"
+          placeholder="メッセージを入力..."
+          class="message-input"
+          rows="1"
+          [disabled]="sending"
+        ></textarea>
+        
+        <button 
+          class="send-btn"
+          (click)="sendMessage()"
+          [disabled]="!newMessage.trim() || sending"
+          [class.sending]="sending"
+        >
+          <span *ngIf="!sending">📤</span>
+          <span *ngIf="sending" class="loading-spinner small"></span>
+        </button>
+      </div>
+      
+      <div class="input-hint">
+        <p>Enterで送信、Shift+Enterで改行</p>
+      </div>
+    </div>
+  </div>
+</div>

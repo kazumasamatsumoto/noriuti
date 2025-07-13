@@ -1,0 +1,169 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>プロフィール管理</h2>
+    <p>あなたの情報を更新して、より良いマッチングを見つけましょう</p>
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-card">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <!-- 基本情報 -->
+        <section class="form-section">
+          <h3>基本情報</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">名前</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                placeholder="あなたの名前"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="age">年齢</label>
+              <input
+                type="number"
+                id="age"
+                formControlName="age"
+                min="18"
+                max="100"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="gender">性別</label>
+              <select id="gender" formControlName="gender">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+                <option value="other">その他</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prefecture">都道府県</label>
+              <select id="prefecture" formControlName="prefecture">
+                <option value="">選択してください</option>
+                <option value="Tokyo">東京都</option>
+                <option value="Osaka">大阪府</option>
+                <option value="Kanagawa">神奈川県</option>
+                <option value="Aichi">愛知県</option>
+                <option value="Saitama">埼玉県</option>
+                <option value="Chiba">千葉県</option>
+                <option value="Hyogo">兵庫県</option>
+                <option value="Hokkaido">北海道</option>
+                <option value="Fukuoka">福岡県</option>
+                <option value="Other">その他</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="city">市区町村</label>
+              <input
+                type="text"
+                id="city"
+                formControlName="city"
+                placeholder="渋谷区"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- 自己紹介 -->
+        <section class="form-section">
+          <h3>自己紹介</h3>
+          <div class="form-group">
+            <label for="bio">自己紹介文</label>
+            <textarea
+              id="bio"
+              formControlName="bio"
+              rows="4"
+              placeholder="あなたについて教えてください..."
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- 好きなスロット機種 -->
+        <section class="form-section">
+          <h3>好きなスロット機種</h3>
+          <div class="form-group">
+            <label>機種名（複数選択可）</label>
+            <div class="favorite-slots">
+              <div class="slot-item" *ngFor="let slot of availableSlots; trackBy: trackBySlot">
+                <input
+                  type="checkbox"
+                  [id]="'slot-' + slot"
+                  [value]="slot"
+                  (change)="onSlotChange($event)"
+                  [checked]="isSlotSelected(slot)"
+                />
+                <label [for]="'slot-' + slot">{{ slot }}</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 遊技スタイル -->
+        <section class="form-section">
+          <h3>遊技スタイル</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="budget">予算</label>
+              <select id="budget" formControlName="budget">
+                <option value="">選択してください</option>
+                <option value="5000円以下">5,000円以下</option>
+                <option value="10000円以下">10,000円以下</option>
+                <option value="20000円以下">20,000円以下</option>
+                <option value="30000円以下">30,000円以下</option>
+                <option value="30000円以上">30,000円以上</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="frequency">頻度</label>
+              <select id="frequency" formControlName="frequency">
+                <option value="">選択してください</option>
+                <option value="週1-2回">週1-2回</option>
+                <option value="週3-4回">週3-4回</option>
+                <option value="ほぼ毎日">ほぼ毎日</option>
+                <option value="月数回">月数回</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>遊技時間帯</label>
+              <div class="time-slots">
+                <div class="time-item" *ngFor="let time of availableTimeSlots">
+                  <input
+                    type="checkbox"
+                    [id]="'time-' + time"
+                    [value]="time"
+                    (change)="onTimeSlotChange($event)"
+                    [checked]="isTimeSlotSelected(time)"
+                  />
+                  <label [for]="'time-' + time">{{ time }}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="success-message" *ngIf="successMessage">
+          {{ successMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="save-btn" [disabled]="profileForm.invalid || loading">
+            {{ loading ? '保存中...' : 'プロフィールを保存' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

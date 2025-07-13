@@ -1,0 +1,201 @@
+<div class="matching-container">
+  <!-- ローディング状態 -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>新しい出会いを探しています...</p>
+  </div>
+
+  <!-- ユーザーがいない場合 -->
+  <div *ngIf="!loading && noMoreUsers" class="no-users-container">
+    <div class="no-users-card">
+      <h2>🎰 お疲れ様でした！</h2>
+      <p>今は新しいユーザーがいません。<br>また後でチェックしてみてください。</p>
+      <button class="btn btn-primary" (click)="reloadMatches()">
+        リロード
+      </button>
+      <a routerLink="/dashboard" class="btn btn-secondary">
+        ダッシュボードに戻る
+      </a>
+    </div>
+  </div>
+
+  <!-- メインマッチングエリア -->
+  <div *ngIf="!loading && !noMoreUsers" class="matching-area">
+    <!-- ヘッダー -->
+    <div class="matching-header">
+      <h1>🎆 新しい出会い</h1>
+      <p>スワイプしてパチスロ仲間を見つけよう！</p>
+    </div>
+
+    <!-- カードスタック -->
+    <div class="card-stack" #cardStack>
+      <!-- メインカード -->
+      <div 
+        *ngIf="getCurrentUser()" 
+        class="user-card main-card"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd($event)"
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)"
+        (mouseup)="onMouseUp($event)"
+      >
+        <div class="card-content">
+          <!-- プロフィール画像 -->
+          <div class="profile-image">
+            <img 
+              [src]="getCurrentUser()?.profileImage || '/assets/images/default-avatar.png'" 
+              [alt]="getCurrentUser()?.name + 'のプロフィール画像'"
+              onerror="this.src='/assets/images/default-avatar.png'"
+            >
+          </div>
+
+          <!-- ユーザー情報 -->
+          <div class="user-info">
+            <div class="user-basic">
+              <h2>{{ getCurrentUser()?.name }}</h2>
+              <span class="age">{{ getAge(getCurrentUser()!) }}歳</span>
+            </div>
+            
+            <div class="user-location">
+              <span class="location-icon">📍</span>
+              {{ getCurrentUser()?.prefecture }} {{ getCurrentUser()?.city }}
+            </div>
+
+            <div class="user-bio" *ngIf="getCurrentUser()?.bio">
+              <p>{{ getCurrentUser()?.bio }}</p>
+            </div>
+
+            <!-- パチスロ情報 -->
+            <div class="pachinko-info">
+              <div class="info-section" *ngIf="getCurrentUser()?.favoriteSlots?.length">
+                <h4>🎰 好きな機種</h4>
+                <div class="slot-tags">
+                  <span 
+                    *ngFor="let slot of getCurrentUser()?.favoriteSlots?.slice(0, 3)" 
+                    class="slot-tag"
+                  >
+                    {{ slot }}
+                  </span>
+                  <span 
+                    *ngIf="(getCurrentUser()?.favoriteSlots?.length || 0) > 3"
+                    class="slot-tag more"
+                  >
+                    +{{ (getCurrentUser()?.favoriteSlots?.length || 0) - 3 }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="play-style" *ngIf="getCurrentUser()?.budget || getCurrentUser()?.frequency">
+                <div class="style-item" *ngIf="getCurrentUser()?.budget">
+                  <span class="label">💰 予算:</span>
+                  <span class="value">{{ getCurrentUser()?.budget }}</span>
+                </div>
+                <div class="style-item" *ngIf="getCurrentUser()?.frequency">
+                  <span class="label">📅 頻度:</span>
+                  <span class="value">{{ getCurrentUser()?.frequency }}</span>
+                </div>
+              </div>
+
+              <div class="time-slots" *ngIf="getCurrentUser()?.timeSlots?.length">
+                <h4>⏰ 遊技時間</h4>
+                <div class="time-tags">
+                  <span 
+                    *ngFor="let timeSlot of getCurrentUser()?.timeSlots" 
+                    class="time-tag"
+                  >
+                    {{ timeSlot }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- スワイプヒント -->
+        <div class="swipe-hint like-overlay">
+          <span>💖 LIKE</span>
+        </div>
+        <div class="swipe-hint pass-overlay">
+          <span>❌ PASS</span>
+        </div>
+      </div>
+
+      <!-- バックグラウンドカード -->
+      <div *ngIf="getNextUser()" class="user-card background-card">
+        <div class="card-content">
+          <div class="profile-image">
+            <img 
+              [src]="getNextUser()?.profileImage || '/assets/images/default-avatar.png'" 
+              [alt]="getNextUser()?.name + 'のプロフィール画像'"
+              onerror="this.src='/assets/images/default-avatar.png'"
+            >
+          </div>
+          <div class="user-info">
+            <div class="user-basic">
+              <h2>{{ getNextUser()?.name }}</h2>
+              <span class="age">{{ getAge(getNextUser()!) }}歳</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- アクションボタン -->
+    <div class="action-buttons">
+      <button 
+        class="action-btn pass-btn" 
+        (click)="onPass()"
+        [disabled]="!getCurrentUser()"
+      >
+        <span class="btn-icon">❌</span>
+        <span class="btn-text">Pass</span>
+      </button>
+      
+      <button 
+        class="action-btn like-btn" 
+        (click)="onLike()"
+        [disabled]="!getCurrentUser()"
+      >
+        <span class="btn-icon">💖</span>
+        <span class="btn-text">Like</span>
+      </button>
+    </div>
+
+    <!-- スワイプガイド -->
+    <div class="swipe-guide">
+      <p>← 左にスワイプでPass ・ 右にスワイプでLike →</p>
+    </div>
+  </div>
+
+  <!-- マッチ通知 -->
+  <div *ngIf="showMatchNotification" class="match-notification-overlay">
+    <div class="match-notification">
+      <div class="match-animation">
+        <div class="fireworks"></div>
+        <h2>🎉 マッチ成立！</h2>
+        <p>{{ matchedUser?.name }}さんとマッチしました！</p>
+        
+        <div class="match-users">
+          <div class="match-user">
+            <img 
+              [src]="matchedUser?.profileImage || '/assets/images/default-avatar.png'" 
+              [alt]="matchedUser?.name"
+              onerror="this.src='/assets/images/default-avatar.png'"
+            >
+            <p>{{ matchedUser?.name }}</p>
+          </div>
+        </div>
+        
+        <div class="match-actions">
+          <button class="btn btn-primary" routerLink="/messages">
+            メッセージを送る
+          </button>
+          <button class="btn btn-secondary" (click)="closeMatchNotification()">
+            続ける
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

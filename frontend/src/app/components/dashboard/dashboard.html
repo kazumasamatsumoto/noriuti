@@ -1,0 +1,32 @@
+<div class="dashboard-container">
+  <div class="welcome-section">
+    <h2>ようこそ、{{ currentUser?.name }}さん！</h2>
+    <p>パチスロ友達を見つけましょう</p>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="card" routerLink="/matching">
+      <h3>マッチング</h3>
+      <p>新しい仲間を見つける</p>
+      <div class="card-icon">🎰</div>
+    </div>
+
+    <div class="card" routerLink="/profile">
+      <h3>マイプロフィール</h3>
+      <p>プロフィールを編集する</p>
+      <div class="card-icon">👤</div>
+    </div>
+
+    <div class="card">
+      <h3>メッセージ</h3>
+      <p>会話を確認する</p>
+      <div class="card-icon">💬</div>
+    </div>
+
+    <div class="card">
+      <h3>マッチ履歴</h3>
+      <p>過去のマッチを確認</p>
+      <div class="card-icon">📋</div>
+    </div>
+  </div>
+</div>
