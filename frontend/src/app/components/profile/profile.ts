@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { ImageUpload } from '../image-upload/image-upload';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageUpload],
   templateUrl: './profile.html',
   styleUrl: './profile.scss'
 })
@@ -16,6 +17,7 @@ export class Profile implements OnInit {
   loading = false;
   errorMessage = '';
   successMessage = '';
+  currentUser: any = null;
 
   availableSlots = [
     'バジリスク絆2',
@@ -73,6 +75,7 @@ export class Profile implements OnInit {
     this.loading = true;
     this.userService.getProfile().subscribe({
       next: (user) => {
+        this.currentUser = user;
         this.profileForm.patchValue({
           name: user.name,
           age: user.age,
@@ -92,6 +95,25 @@ export class Profile implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onImageUploaded(imageUrl: string) {
+    this.successMessage = 'プロフィール画像が更新されました';
+    if (this.currentUser) {
+      this.currentUser.profileImage = imageUrl;
+    }
+    // 3秒後にメッセージを消去
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
+  }
+
+  onImageUploadError(error: string) {
+    this.errorMessage = error;
+    // 5秒後にエラーメッセージを消去
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 5000);
   }
 
   onSubmit() {

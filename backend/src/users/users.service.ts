@@ -50,4 +50,14 @@ export class UsersService {
       take: 20,
     });
   }
+
+  async updateProfileImage(id: string, imageUrl: string): Promise<User> {
+    const user = await this.findById(id);
+    
+    user.profileImage = imageUrl;
+    
+    await this.userRepository.save(user);
+    
+    return this.findById(id);
+  }
 }

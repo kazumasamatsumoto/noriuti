@@ -4,7 +4,29 @@
     <p>あなたの情報を更新して、より良いマッチングを見つけましょう</p>
   </div>
 
+  <!-- エラーメッセージ -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- 成功メッセージ -->
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
   <div class="profile-content">
+    <!-- プロフィール画像セクション -->
+    <div class="profile-image-section">
+      <h3>プロフィール画像</h3>
+      <app-image-upload
+        [currentImageUrl]="currentUser?.profileImage"
+        uploadText="プロフィール画像をアップロード"
+        [maxSizeMB]="5"
+        (imageUploaded)="onImageUploaded($event)"
+        (uploadError)="onImageUploadError($event)"
+      ></app-image-upload>
+    </div>
+
     <div class="profile-card">
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <!-- 基本情報 -->

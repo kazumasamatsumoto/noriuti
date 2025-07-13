@@ -1,0 +1,87 @@
+<div class="image-upload-container">
+  <!-- 現在の画像またはプレビュー -->
+  <div class="image-preview-section">
+    <div 
+      class="image-preview"
+      [class.has-image]="previewUrl"
+      [class.drag-over]="dragOver"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="triggerFileInput()"
+    >
+      <!-- 画像表示 -->
+      <div *ngIf="previewUrl" class="image-display">
+        <img 
+          [src]="previewUrl" 
+          alt="プロフィール画像"
+          class="preview-image"
+        >
+        <div class="image-overlay">
+          <button 
+            type="button"
+            class="change-btn"
+            [disabled]="uploading"
+          >
+            📷 変更
+          </button>
+          <button 
+            type="button"
+            class="remove-btn"
+            (click)="removeImage(); $event.stopPropagation()"
+            [disabled]="uploading"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+
+      <!-- 画像がない場合のプレースホルダー -->
+      <div *ngIf="!previewUrl" class="image-placeholder">
+        <div class="placeholder-content">
+          <div class="upload-icon">📷</div>
+          <p class="upload-text">{{ uploadText }}</p>
+          <p class="upload-hint">
+            クリックまたはドラッグ&ドロップ<br>
+            <small>(JPEG, PNG, GIF, WebP - 最大{{ maxSizeMB }}MB)</small>
+          </p>
+        </div>
+      </div>
+
+      <!-- アップロード中の表示 -->
+      <div *ngIf="uploading" class="uploading-overlay">
+        <div class="loading-spinner"></div>
+        <p>アップロード中...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 隠しファイル入力 -->
+  <input
+    type="file"
+    id="imageFileInput"
+    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+    style="display: none"
+    (change)="onFileSelected($event)"
+  >
+
+  <!-- アップロードボタン（画像がない場合） -->
+  <div *ngIf="!previewUrl && !uploading" class="upload-actions">
+    <button 
+      type="button"
+      class="btn btn-primary upload-btn"
+      (click)="triggerFileInput()"
+    >
+      📷 {{ uploadText }}
+    </button>
+  </div>
+
+  <!-- 画像情報・ヒント -->
+  <div class="upload-info">
+    <ul>
+      <li>推奨サイズ: 500×500px以上の正方形</li>
+      <li>対応形式: JPEG, PNG, GIF, WebP</li>
+      <li>最大ファイルサイズ: {{ maxSizeMB }}MB</li>
+    </ul>
+  </div>
+</div>
