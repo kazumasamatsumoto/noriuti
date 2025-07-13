@@ -13,6 +13,10 @@ async function bootstrap() {
     credentials: true,
   });
   
+  // JSON レスポンスの文字エンコーディング設定
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  
   // グローバルバリデーション
   app.useGlobalPipes(new ValidationPipe());
   

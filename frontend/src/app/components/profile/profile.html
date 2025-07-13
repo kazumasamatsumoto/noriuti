@@ -16,10 +16,10 @@
 
   <div class="profile-content">
     <!-- プロフィール画像セクション -->
-    <div class="profile-image-section">
+    <div class="profile-image-section" *ngIf="currentUser">
       <h3>プロフィール画像</h3>
       <app-image-upload
-        [currentImageUrl]="currentUser?.profileImage"
+        [currentImageUrl]="currentUser.profileImage"
         uploadText="プロフィール画像をアップロード"
         [maxSizeMB]="5"
         (imageUploaded)="onImageUploaded($event)"

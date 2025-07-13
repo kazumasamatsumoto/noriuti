@@ -33,9 +33,7 @@
       <div 
         *ngIf="getCurrentUser()" 
         class="user-card main-card"
-        (touchstart)="onTouchStart($event)"
-        (touchmove)="onTouchMove($event)"
-        (touchend)="onTouchEnd($event)"
+        #cardElement
         (mousedown)="onMouseDown($event)"
         (mousemove)="onMouseMove($event)"
         (mouseup)="onMouseUp($event)"
@@ -43,11 +41,16 @@
         <div class="card-content">
           <!-- プロフィール画像 -->
           <div class="profile-image">
-            <img 
-              [src]="getCurrentUser()?.profileImage || '/assets/images/default-avatar.png'" 
-              [alt]="getCurrentUser()?.name + 'のプロフィール画像'"
-              onerror="this.src='/assets/images/default-avatar.png'"
-            >
+            <div class="avatar-container">
+              <img 
+                *ngIf="getImageUrl(getCurrentUser()?.profileImage)" 
+                [src]="getImageUrl(getCurrentUser()?.profileImage)" 
+                [alt]="getCurrentUser()?.name + 'のプロフィール画像'"
+              >
+              <div *ngIf="!getCurrentUser()?.profileImage" class="default-avatar">
+                <span>{{ getCurrentUser()?.name?.charAt(0) || '?' }}</span>
+              </div>
+            </div>
           </div>
 
           <!-- ユーザー情報 -->
@@ -125,11 +128,16 @@
       <div *ngIf="getNextUser()" class="user-card background-card">
         <div class="card-content">
           <div class="profile-image">
-            <img 
-              [src]="getNextUser()?.profileImage || '/assets/images/default-avatar.png'" 
-              [alt]="getNextUser()?.name + 'のプロフィール画像'"
-              onerror="this.src='/assets/images/default-avatar.png'"
-            >
+            <div class="avatar-container">
+              <img 
+                *ngIf="getImageUrl(getNextUser()?.profileImage)" 
+                [src]="getImageUrl(getNextUser()?.profileImage)" 
+                [alt]="getNextUser()?.name + 'のプロフィール画像'"
+              >
+              <div *ngIf="!getNextUser()?.profileImage" class="default-avatar">
+                <span>{{ getNextUser()?.name?.charAt(0) || '?' }}</span>
+              </div>
+            </div>
           </div>
           <div class="user-info">
             <div class="user-basic">
@@ -178,11 +186,16 @@
         
         <div class="match-users">
           <div class="match-user">
-            <img 
-              [src]="matchedUser?.profileImage || '/assets/images/default-avatar.png'" 
-              [alt]="matchedUser?.name"
-              onerror="this.src='/assets/images/default-avatar.png'"
-            >
+            <div class="avatar-container small">
+              <img 
+                *ngIf="getImageUrl(matchedUser?.profileImage)" 
+                [src]="getImageUrl(matchedUser?.profileImage)" 
+                [alt]="matchedUser?.name"
+              >
+              <div *ngIf="!matchedUser?.profileImage" class="default-avatar">
+                <span>{{ matchedUser?.name?.charAt(0) || '?' }}</span>
+              </div>
+            </div>
             <p>{{ matchedUser?.name }}</p>
           </div>
         </div>

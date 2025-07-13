@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -11,8 +11,9 @@ import { User } from '../../models/user.model';
   templateUrl: './matching.html',
   styleUrl: './matching.scss'
 })
-export class Matching implements OnInit, OnDestroy {
+export class Matching implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('cardStack', { static: false }) cardStack!: ElementRef;
+  @ViewChild('cardElement', { static: false }) cardElement!: ElementRef;
   
   potentialMatches: User[] = [];
   currentUserIndex = 0;
@@ -33,9 +34,28 @@ export class Matching implements OnInit, OnDestroy {
     this.loadPotentialMatches();
   }
 
+  ngAfterViewInit() {
+    this.setupTouchListeners();
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private setupTouchListeners() {
+    if (this.cardElement?.nativeElement) {
+      const element = this.cardElement.nativeElement;
+      
+      // パッシブでtouchstartを追加
+      element.addEventListener('touchstart', (e: TouchEvent) => this.onTouchStart(e), { passive: true });
+      
+      // touchmoveは非パッシブ（preventDefaultが必要なため）
+      element.addEventListener('touchmove', (e: TouchEvent) => this.onTouchMove(e), { passive: false });
+      
+      // パッシブでtouchendを追加
+      element.addEventListener('touchend', (e: TouchEvent) => this.onTouchEnd(e), { passive: true });
+    }
   }
 
   loadPotentialMatches() {
@@ -113,9 +133,13 @@ export class Matching implements OnInit, OnDestroy {
   onTouchMove(event: TouchEvent) {
     if (!this.isDragging) return;
     
-    event.preventDefault();
     this.currentX = event.touches[0].clientX;
     const deltaX = this.currentX - this.startX;
+    
+    // スワイプ操作が検出された場合のみpreventDefault
+    if (Math.abs(deltaX) > 10) {
+      event.preventDefault();
+    }
     
     // カードの回転と移動
     this.cardRotation = deltaX * 0.1;
@@ -252,5 +276,11 @@ export class Matching implements OnInit, OnDestroy {
     this.currentUserIndex = 0;
     this.noMoreUsers = false;
     this.loadPotentialMatches();
+  }
+
+  getImageUrl(imageUrl: string | null | undefined): string | null {
+    if (!imageUrl) return null;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    return `http://localhost:3000${imageUrl}`;
   }
 }

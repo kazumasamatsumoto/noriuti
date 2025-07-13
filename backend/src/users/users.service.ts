@@ -41,7 +41,7 @@ export class UsersService {
   }
 
   async findPotentialMatches(userId: string): Promise<User[]> {
-    return this.userRepository.find({
+    const users = await this.userRepository.find({
       where: {
         id: Not(userId),
         isActive: true,
@@ -49,6 +49,13 @@ export class UsersService {
       select: ['id', 'name', 'age', 'gender', 'prefecture', 'city', 'bio', 'favoriteSlots', 'playStyle', 'profileImage'],
       take: 20,
     });
+    
+    // デバッグ: 文字化けチェック
+    users.forEach(user => {
+      console.log('User name from DB:', user.name, 'Buffer:', Buffer.from(user.name || '', 'utf8'));
+    });
+    
+    return users;
   }
 
   async updateProfileImage(id: string, imageUrl: string): Promise<User> {
@@ -59,5 +66,45 @@ export class UsersService {
     await this.userRepository.save(user);
     
     return this.findById(id);
+  }
+
+  async debugUserData() {
+    const users = await this.userRepository.find({
+      select: ['id', 'name', 'email'],
+      take: 10
+    });
+    
+    return users.map(user => ({
+      id: user.id,
+      name: user.name,
+      nameBuffer: Buffer.from(user.name || '', 'utf8').toString('hex'),
+      hasCorruption: (user.name || '').includes('�'),
+      email: user.email
+    }));
+  }
+
+  async fixUserEncoding() {
+    const users = await this.userRepository.find();
+    const fixedUsers: Array<{id: string, originalName: string, fixedName: string}> = [];
+    
+    for (const user of users) {
+      if (user.name && user.name.includes('�')) {
+        // 文字化けした名前をデフォルト値に置き換え
+        const originalName = user.name;
+        user.name = `ユーザー${user.id.slice(-4)}`; // IDの末尾4桁を使用
+        
+        await this.userRepository.save(user);
+        fixedUsers.push({
+          id: user.id,
+          originalName,
+          fixedName: user.name
+        });
+      }
+    }
+    
+    return {
+      message: `Fixed ${fixedUsers.length} users`,
+      fixedUsers
+    };
   }
 }

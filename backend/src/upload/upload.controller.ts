@@ -53,7 +53,7 @@ export class UploadController {
     }
 
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       
       // 現在のユーザー情報を取得して古い画像を削除
       const currentUser = await this.usersService.findById(userId);

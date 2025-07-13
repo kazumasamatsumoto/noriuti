@@ -19,6 +19,7 @@
             id="email" 
             formControlName="email" 
             class="form-control"
+            autocomplete="email"
             [class.error]="getFieldError('email')"
           >
           <div class="field-error">{{ getFieldError('email') }}</div>
@@ -31,6 +32,7 @@
             id="password" 
             formControlName="password" 
             class="form-control"
+            autocomplete="new-password"
             [class.error]="getFieldError('password')"
           >
           <div class="field-error">{{ getFieldError('password') }}</div>
@@ -43,6 +45,7 @@
             id="confirmPassword" 
             formControlName="confirmPassword" 
             class="form-control"
+            autocomplete="new-password"
             [class.error]="getFieldError('confirmPassword')"
           >
           <div class="field-error">{{ getFieldError('confirmPassword') }}</div>
@@ -55,6 +58,7 @@
             id="name" 
             formControlName="name" 
             class="form-control"
+            autocomplete="name"
             [class.error]="getFieldError('name')"
           >
           <div class="field-error">{{ getFieldError('name') }}</div>

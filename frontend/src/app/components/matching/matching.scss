@@ -9,7 +9,7 @@
   overflow: hidden;
 }
 
-// íüÇ£ó°¶K
+// ï¿½ï¿½Ç£ï¿½K
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -34,7 +34,7 @@
   }
 }
 
-// æü¶üLDjD4
+// ï¿½ï¿½ï¿½ï¿½LDjD4
 .no-users-container {
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@
   }
 }
 
-// á¤óÞÃÁó°¨ê¢
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 .matching-area {
   width: 100%;
   max-width: 400px;
@@ -120,7 +120,7 @@
   }
 }
 
-// «üÉ¹¿Ã¯
+// ï¿½ï¿½É¹ï¿½Ã¯
 .card-stack {
   position: relative;
   width: 100%;
@@ -157,7 +157,7 @@
     cursor: grabbing;
   }
 
-  // ¹ï¤×ÒóÈ
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   &.like-hint {
     .like-overlay {
       opacity: 1;
@@ -322,7 +322,7 @@
   }
 }
 
-// ¹ï¤×ªüÐüì¤
+// ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½
 .swipe-hint {
   position: absolute;
   top: 50%;
@@ -355,7 +355,7 @@
   }
 }
 
-// ¢¯·çóÜ¿ó
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿ï¿½
 .action-buttons {
   display: flex;
   gap: 2rem;
@@ -418,7 +418,7 @@
   }
 }
 
-// ¹ï¤×¬¤É
+// ï¿½ï¿½×¬ï¿½ï¿½
 .swipe-guide {
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
@@ -429,7 +429,7 @@
   }
 }
 
-// ÞÃÁå
+// ï¿½ï¿½ï¿½ï¿½
 .match-notification-overlay {
   position: fixed;
   top: 0;
@@ -544,7 +544,7 @@
   }
 }
 
-// ¢Ëáü·çó
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -577,7 +577,7 @@
   }
 }
 
-// ì¹Ýó·ÖþÜ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 @media (max-width: 768px) {
   .matching-container {
     padding: 0.5rem;
@@ -637,5 +637,37 @@
 
   .user-info .user-basic h2 {
     font-size: 1.25rem;
+  }
+}
+
+// Avatar styles
+.avatar-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .default-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 2rem;
+    text-transform: uppercase;
+  }
+  
+  &.small .default-avatar {
+    font-size: 1.5rem;
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, UseGuards, Request, Post, SetMetadata } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -26,6 +26,18 @@ export class UsersController {
   @Get('potential-matches')
   async getPotentialMatches(@Request() req) {
     return this.usersService.findPotentialMatches(req.user.id);
+  }
+
+  @Get('debug-encoding')
+  @SetMetadata('isPublic', true)
+  async debugUsers() {
+    return this.usersService.debugUserData();
+  }
+
+  @Post('fix-encoding') 
+  @SetMetadata('isPublic', true)
+  async fixEncoding() {
+    return this.usersService.fixUserEncoding();
   }
 
   @Get(':id')

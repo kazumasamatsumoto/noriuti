@@ -5,12 +5,14 @@ import { JwtModule } from '@nestjs/jwt';
 // import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DebugController } from './debug.controller';
 import { databaseConfig } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MatchesModule } from './matches/matches.module';
 import { MessagesModule } from './messages/messages.module';
 import { UploadModule } from './upload/upload.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import { UploadModule } from './upload/upload.module';
     MatchesModule,
     MessagesModule,
     UploadModule,
+    AdminModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, DebugController],
   providers: [AppService],
 })
 export class AppModule {}

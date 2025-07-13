@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
@@ -53,7 +53,8 @@ export class Profile implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -101,9 +102,8 @@ export class Profile implements OnInit {
 
   onImageUploaded(imageUrl: string) {
     this.successMessage = 'プロフィール画像が更新されました';
-    if (this.currentUser) {
-      this.currentUser.profileImage = imageUrl;
-    }
+    // データベースから最新のプロフィール情報を再読み込み
+    this.loadUserProfile();
     // 3秒後にメッセージを消去
     setTimeout(() => {
       this.successMessage = '';

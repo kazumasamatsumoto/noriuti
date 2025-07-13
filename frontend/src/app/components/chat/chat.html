@@ -29,11 +29,16 @@
         (click)="selectConversation(conversation)"
       >
         <div class="conversation-avatar">
-          <img 
-            [src]="conversation.user.profileImage || '/assets/images/default-avatar.png'"
-            [alt]="conversation.user.name"
-            onerror="this.src='/assets/images/default-avatar.png'"
-          >
+          <div class="avatar-container">
+            <img 
+              *ngIf="getImageUrl(conversation.user.profileImage)" 
+              [src]="getImageUrl(conversation.user.profileImage)"
+              [alt]="conversation.user.name"
+            >
+            <div *ngIf="!conversation.user.profileImage" class="default-avatar">
+              <span>{{ conversation.user.name?.charAt(0) || '?' }}</span>
+            </div>
+          </div>
           <span 
             *ngIf="conversation.unreadCount > 0" 
             class="unread-badge"
@@ -93,12 +98,16 @@
       </button>
       
       <div *ngIf="currentUser" class="chat-user-info">
-        <img 
-          [src]="currentUser.profileImage || '/assets/images/default-avatar.png'"
-          [alt]="currentUser.name"
-          class="user-avatar"
-          onerror="this.src='/assets/images/default-avatar.png'"
-        >
+        <div class="avatar-container user-avatar">
+          <img 
+            *ngIf="getImageUrl(currentUser.profileImage)" 
+            [src]="getImageUrl(currentUser.profileImage)"
+            [alt]="currentUser.name"
+          >
+          <div *ngIf="!currentUser.profileImage" class="default-avatar">
+            <span>{{ currentUser.name?.charAt(0) || '?' }}</span>
+          </div>
+        </div>
         <div class="user-details">
           <h2>{{ currentUser.name }}</h2>
           <p>{{ currentUser.prefecture }} {{ currentUser.city }}</p>
