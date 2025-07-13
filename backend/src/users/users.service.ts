@@ -85,20 +85,31 @@ export class UsersService {
 
   async fixUserEncoding() {
     const users = await this.userRepository.find();
-    const fixedUsers: Array<{id: string, originalName: string, fixedName: string}> = [];
+    const fixedUsers: Array<{id: string, originalName: string, fixedName: string, originalBio?: string, fixedBio?: string}> = [];
     
     for (const user of users) {
+      let needsSave = false;
+      const result: any = { id: user.id };
+      
+      // 名前の文字化け修正
       if (user.name && user.name.includes('�')) {
-        // 文字化けした名前をデフォルト値に置き換え
-        const originalName = user.name;
-        user.name = `ユーザー${user.id.slice(-4)}`; // IDの末尾4桁を使用
-        
+        result.originalName = user.name;
+        user.name = `ユーザー${user.id.slice(-4)}`;
+        result.fixedName = user.name;
+        needsSave = true;
+      }
+      
+      // bioの文字化け修正
+      if (user.bio && user.bio.includes('�')) {
+        result.originalBio = user.bio;
+        user.bio = 'パチスロ大好きです'; // デフォルトのbio
+        result.fixedBio = user.bio;
+        needsSave = true;
+      }
+      
+      if (needsSave) {
         await this.userRepository.save(user);
-        fixedUsers.push({
-          id: user.id,
-          originalName,
-          fixedName: user.name
-        });
+        fixedUsers.push(result);
       }
     }
     
