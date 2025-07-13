@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/user.model';
 
@@ -11,6 +11,7 @@ export class AuthService {
   private readonly API_URL = 'http://localhost:3000';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private isInitializing = false;
 
   constructor(
     private http: HttpClient,
@@ -45,7 +46,34 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return false;
+    }
+
+    // トークンの有効期限をチェック
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      if (payload.exp && payload.exp < currentTime) {
+        // トークンが期限切れの場合、ローカルストレージをクリア
+        this.clearLocalStorage();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      // トークンが無効な場合
+      this.clearLocalStorage();
+      return false;
+    }
+  }
+
+  private clearLocalStorage(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.currentUserSubject.next(null);
   }
 
   getToken(): string | null {
@@ -67,19 +95,45 @@ export class AuthService {
   }
 
   private loadUserFromStorage(): void {
+    if (this.isInitializing) return;
+    this.isInitializing = true;
+
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
     
     if (token && userStr) {
-      // Verify token is still valid by getting fresh profile
-      this.getProfile().subscribe({
-        next: (user) => {
-          this.currentUserSubject.next(user);
-        },
-        error: () => {
-          this.logout();
+      // トークンの基本チェック（サーバー呼び出しなし）
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const currentTime = Math.floor(Date.now() / 1000);
+        
+        if (payload.exp && payload.exp < currentTime) {
+          // トークンが期限切れ
+          this.clearLocalStorage();
+          this.isInitializing = false;
+          return;
         }
-      });
+
+        // トークンが有効な場合、ユーザー情報を復元
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+        
+        // バックグラウンドでプロフィールを更新（循環依存を避けるため、エラー時はサイレント処理）
+        this.getProfile().subscribe({
+          next: (freshUser) => {
+            this.currentUserSubject.next(freshUser);
+            localStorage.setItem('user', JSON.stringify(freshUser));
+          },
+          error: () => {
+            // サーバーエラーの場合はサイレントに処理（循環依存を避けるため）
+            // 必要に応じて手動でログアウトしてもらう
+          }
+        });
+      } catch (error) {
+        this.clearLocalStorage();
+      }
     }
+    
+    this.isInitializing = false;
   }
 }

@@ -6,6 +6,7 @@ export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  // トークンの存在と有効性をチェック
   if (authService.isAuthenticated()) {
     return true;
   }

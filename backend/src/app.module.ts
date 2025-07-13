@@ -24,7 +24,7 @@ import { AdminModule } from './admin/admin.module';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'pachi-friend-secret',
-      signOptions: { expiresIn: '24h' },
+      signOptions: { expiresIn: '8h' },
     }),
     AuthModule,
     UsersModule,
