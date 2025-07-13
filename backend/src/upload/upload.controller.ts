@@ -45,7 +45,7 @@ export class UploadController {
     }),
   )
   async uploadProfileImage(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Request() req: any,
   ) {
     if (!file) {

@@ -34,7 +34,7 @@ export class UploadService {
   }
 
   // ファイルの検証
-  validateImageFile(file: Express.Multer.File): { isValid: boolean; error?: string } {
+  validateImageFile(file: any): { isValid: boolean; error?: string } {
     // ファイルサイズチェック (5MB制限)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
