@@ -68,7 +68,7 @@ export class MessageService {
   updateConversationWithNewMessage(message: Message): void {
     const conversations = this.conversationsSubject.value;
     const existingConversationIndex = conversations.findIndex(
-      conv => conv.otherUser.id === message.senderId || conv.otherUser.id === message.receiverId
+      conv => conv.user.id === message.senderId || conv.user.id === message.receiverId
     );
 
     if (existingConversationIndex >= 0) {

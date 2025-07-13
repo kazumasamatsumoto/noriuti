@@ -30,8 +30,8 @@
       >
         <div class="conversation-avatar">
           <img 
-            [src]="conversation.otherUser.profileImage || '/assets/images/default-avatar.png'"
-            [alt]="conversation.otherUser.name"
+            [src]="conversation.user.profileImage || '/assets/images/default-avatar.png'"
+            [alt]="conversation.user.name"
             onerror="this.src='/assets/images/default-avatar.png'"
           >
           <span 
@@ -44,7 +44,7 @@
 
         <div class="conversation-content">
           <div class="conversation-header">
-            <h3>{{ conversation.otherUser.name }}</h3>
+            <h3>{{ conversation.user.name }}</h3>
             <span class="conversation-time">
               {{ formatConversationTime(conversation.lastMessage.createdAt) }}
             </span>

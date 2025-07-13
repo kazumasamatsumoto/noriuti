@@ -194,7 +194,7 @@ export class Chat implements OnInit, OnDestroy, AfterViewChecked {
 
   // チャット一覧から会話を選択
   selectConversation(conversation: Conversation) {
-    this.router.navigate(['/chat', conversation.otherUser.id]);
+    this.router.navigate(['/chat', conversation.user.id]);
   }
 
   // チャット一覧に戻る
@@ -245,7 +245,7 @@ export class Chat implements OnInit, OnDestroy, AfterViewChecked {
   deleteConversation(conversation: Conversation, event: Event) {
     event.stopPropagation();
     // TODO: 実装
-    console.log('Delete conversation:', conversation.otherUser.name);
+    console.log('Delete conversation:', conversation.user.name);
   }
 
   // ユーザープロフィールを表示（将来の機能）
@@ -256,7 +256,7 @@ export class Chat implements OnInit, OnDestroy, AfterViewChecked {
 
   // TrackBy関数（パフォーマンス最適化）
   trackByConversationId(index: number, conversation: Conversation): string {
-    return conversation.otherUser.id;
+    return conversation.user.id;
   }
 
   trackByMessageId(index: number, message: Message): string {
