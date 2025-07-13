@@ -75,6 +75,8 @@ export class Profile implements OnInit {
     this.loading = true;
     this.userService.getProfile().subscribe({
       next: (user) => {
+        console.log('Loaded user profile:', user);
+        console.log('Profile image URL:', user.profileImage);
         this.currentUser = user;
         this.profileForm.patchValue({
           name: user.name,

@@ -28,7 +28,14 @@ export class ImageUpload {
   ) {}
 
   ngOnInit() {
-    this.previewUrl = this.currentImageUrl;
+    console.log('ImageUpload ngOnInit - currentImageUrl:', this.currentImageUrl);
+    // 相対URLを絶対URLに変換
+    if (this.currentImageUrl && !this.currentImageUrl.startsWith('http')) {
+      this.previewUrl = `http://localhost:3000${this.currentImageUrl}`;
+    } else {
+      this.previewUrl = this.currentImageUrl;
+    }
+    console.log('ImageUpload - final previewUrl:', this.previewUrl);
   }
 
   onFileSelected(event: Event): void {
@@ -104,7 +111,13 @@ export class ImageUpload {
     this.http.post<{imageUrl: string, message: string}>(`${this.API_URL}/upload/profile-image`, formData)
       .subscribe({
         next: (response) => {
+          console.log('Upload response:', response);
           this.uploading = false;
+          // 相対URLを絶対URLに変換してプレビューを更新
+          const fullImageUrl = response.imageUrl.startsWith('http') 
+            ? response.imageUrl 
+            : `${this.API_URL}${response.imageUrl}`;
+          this.previewUrl = fullImageUrl;
           this.imageUploaded.emit(response.imageUrl);
         },
         error: (error) => {
